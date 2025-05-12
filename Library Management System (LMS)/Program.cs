@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Security.Policy;
 using System.Threading;
@@ -59,6 +59,8 @@ namespace Programming_2_Midterms
 
             List<string> pendingUsers = new List<string>(); // List of users with pending requests
 
+            List<int> pendingIndices = new List<int>(); // List of indices for pending requests
+
             // -----logging in variables-----
 
             string userName; // User's name
@@ -67,7 +69,7 @@ namespace Programming_2_Midterms
 
             int role; //  New stored userInput (User's role (1 for Student, 2 for Librarian))
 
-            bool isLoggedIn = false; // Flag to check if user is logged in
+            bool exitProgram; // Flag to check if user is logged in
 
             string userChoice; // User's choice in the menu
 
@@ -134,8 +136,6 @@ namespace Programming_2_Midterms
 
             int c; // Loop variable for iterating through lists
 
-            string status; // handles status if accepted or declined
-
             string approvalInput; // user Input if approved or not
 
             int bookIndex; // Book index for returning a book
@@ -146,13 +146,13 @@ namespace Programming_2_Midterms
 
             string userInput3; // implicit casting to bookIndex variable
 
-            string bookApproved; // Book title to approve
-
             string requester; // requester name
 
-            string declinedBook; // Book title to decline
+            string currentStatus; // Book status for the request
 
-            string declinedRequester; // declined request name
+            string ADinput; // user input for approve/decline request
+
+            int selection; // user input for approve/decline request
 
             //---------------------------------------------------------------------------------------
 
@@ -189,6 +189,8 @@ namespace Programming_2_Midterms
             }
 
             Console.Clear();
+
+            exitProgram = false;
 
             // Main login loop
             do
@@ -255,6 +257,7 @@ namespace Programming_2_Midterms
 
                 Console.Clear();
                 Console.Write("\nLoading Please Wait");
+
                 for (int j = 0; j < 5; j++)
                 {
                     Console.Write(".");
@@ -283,6 +286,7 @@ namespace Programming_2_Midterms
                         Console.WriteLine("\n3. View Borrowed Books");
                         Console.WriteLine("\n4. Return Book");
                         Console.WriteLine("\n5. Logout");
+             
                     }
                     else // menu option for librarian
                     {
@@ -291,6 +295,7 @@ namespace Programming_2_Midterms
                         Console.WriteLine("\n3. View Pending Requests");
                         Console.WriteLine("\n4. Approve/Decline Requests");
                         Console.WriteLine("\n5. Logout");
+                     
                     }
 
                     Console.Write("\nChoose an option: ");
@@ -298,7 +303,7 @@ namespace Programming_2_Midterms
 
                     switch (userChoice) // switch case for menu options
                     {
-                        case "1": // case handles viewing books
+                        case "1": // case handles viewing books (students) or adding new books (librarians)
 
                             if (role == 1) // student
                             {
@@ -432,7 +437,7 @@ namespace Programming_2_Midterms
                             }
                             break;
 
-                        case "2": // case handles borrowing books
+                        case "2": // case handles borrowing books (students) or viewing all books (librarians)
 
                             if (role == 1) // student
                             {
@@ -689,7 +694,7 @@ namespace Programming_2_Midterms
                             break;
 
 
-                        case "3": // case handles viewing borrowed books
+                        case "3": // case handles viewing borrowed books (students) or viewing pending requests (librarians)
 
                             if (role == 1) // Student
                             {
@@ -820,7 +825,7 @@ namespace Programming_2_Midterms
                             }
                             break;
 
-                        case "4": // return a book
+                        case "4": // return a book (students) or approve/decline requests (librarians)
 
                             if (role == 1) // student
                             {
@@ -831,7 +836,7 @@ namespace Programming_2_Midterms
                                 if (!studentBorrowedBooks.ContainsKey(userName) || studentBorrowedBooks[userName].Count == 0) // check if the user has borrowed books
                                 {
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("\nNo books borrowed.");
+                                    Console.WriteLine("\nNo books borrowed.\n");
                                     Console.ResetColor();
                                 }
                                 else // if the user has borrowed books
@@ -860,7 +865,9 @@ namespace Programming_2_Midterms
                                         {
 
                                             studentBorrowedBooks[userName].Remove(ReturnNow); // Remove from the borrowed books list
+
                                             approvedBooks.Remove(ReturnNow); // Remove from approved books
+
                                             borrowedBooksTracker.Remove(ReturnNow); // Remove from tracker
 
                                             requestIndex = studentBorrowRequests.IndexOf(ReturnNow); // get the index of the request
@@ -868,7 +875,9 @@ namespace Programming_2_Midterms
                                             if (requestIndex != -1 && requestIndex < requestStudents.Count && requestIndex < requestStatuses.Count) // check if the request index is valid
                                             {
                                                 studentBorrowRequests.RemoveAt(requestIndex); // remove from requests
+
                                                 requestStudents.RemoveAt(requestIndex); // remove from request students
+
                                                 requestStatuses.RemoveAt(requestIndex); // remove from request statuses
                                             }
 
@@ -907,8 +916,11 @@ namespace Programming_2_Midterms
                                             // Remove from the borrowed books list
 
                                             studentBorrowedBooks[userName].Remove(ReturnNow); // Remove from the borrowed books list
+
                                             approvedBooks.Remove(ReturnNow); // Remove from approved books
+
                                             pendingBookRequests.Remove(ReturnNow); // Remove from pending requests
+
                                             borrowedBooksTracker.Remove(ReturnNow); // Remove from tracker
 
                                             requestIndex = studentBorrowRequests.IndexOf(ReturnNow); // get the index of the request
@@ -916,7 +928,9 @@ namespace Programming_2_Midterms
                                             if (requestIndex != -1 && requestIndex < requestStudents.Count && requestIndex < requestStatuses.Count) // check if the request index is valid
                                             {
                                                 studentBorrowRequests.RemoveAt(requestIndex); // remove from requests
+
                                                 requestStudents.RemoveAt(requestIndex); // remove from request students
+
                                                 requestStatuses.RemoveAt(requestIndex); // remove from request statuses
                                             }
 
@@ -928,8 +942,11 @@ namespace Programming_2_Midterms
                                         {
 
                                             studentBorrowedBooks[userName].Remove(ReturnNow); // Remove from the borrowed books list
+
                                             approvedBooks.Remove(ReturnNow); // Remove from approved books
+
                                             pendingBookRequests.Remove(ReturnNow); // Remove from pending requests
+
                                             borrowedBooksTracker.Remove(ReturnNow); // Remove from tracker
 
                                             requestIndex = studentBorrowRequests.IndexOf(ReturnNow); // get the index of the request
@@ -937,7 +954,9 @@ namespace Programming_2_Midterms
                                             if (requestIndex != -1 && requestIndex < requestStudents.Count && requestIndex < requestStatuses.Count) // check if the request index is valid
                                             {
                                                 studentBorrowRequests.RemoveAt(requestIndex); // remove from requests
+
                                                 requestStudents.RemoveAt(requestIndex); // remove from request students
+
                                                 requestStatuses.RemoveAt(requestIndex); // remove from request statuses
                                             }
 
@@ -966,109 +985,109 @@ namespace Programming_2_Midterms
                                 Console.Clear();
                                 Console.WriteLine("\nPending Requests:");
 
-
                                 if (studentBorrowRequests.Count == 0) // check if there are no requests
                                 {
                                     Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine("\nNo pending requests.");
-                                    Console.ReadKey();
-
                                     Console.ResetColor();
+                                    Console.ReadKey();
                                 }
-                                else // if there are requests
+                                else // there is a request
                                 {
-                                    c = 0; // reset loop variable
+                                    pendingIndices.Clear(); // clear the pending indices list
 
-                                    while (c < studentBorrowRequests.Count)
+
+                                    for (int i = 0; i < studentBorrowRequests.Count; i++) //loop through the borrow requests
                                     {
-                                        if (requestStatuses[c] == "Pending") // check if the request is pending
+                                        if (requestStatuses[i] == "Pending")
                                         {
-                                            do
+                                            pendingIndices.Add(i); // store actual index
+                                            Console.ForegroundColor = ConsoleColor.Cyan;
+                                            Console.WriteLine($"\n{pendingIndices.Count}. {studentBorrowRequests[i]} requested by {requestStudents[i]} (Status: {requestStatuses[i]})"); // display the book title and requester
+                                            Console.ResetColor();
+                                        }
+                                    }
+
+                                    if (pendingIndices.Count == 0)
+                                    {
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("\nNo pending requests.");
+                                        Console.ResetColor();
+                                        Console.ReadKey();
+                                        return;
+                                    }
+
+                                    Console.Write("\nEnter the number of the request to approve or decline (press any key to exit): ");
+                                    ADinput = Console.ReadLine();
+
+                                    if (int.TryParse(ADinput, out selection) && selection > 0 && selection <= pendingIndices.Count) // check if the input is valid
+                                    {
+                                         c = pendingIndices[selection - 1]; // get the actual index of the selected request
+
+                                        selectedBook = studentBorrowRequests[c]; // get the book title
+
+                                        requester = requestStudents[c]; // get the requester name
+
+                                        currentStatus = requestStatuses[c]; // get the current status
+
+                                        Console.Clear();
+                                        Console.ForegroundColor = ConsoleColor.Cyan;
+                                        Console.WriteLine($"\nYou selected: {selectedBook} requested by {requester} (Status: {currentStatus})");
+                                        Console.ResetColor();
+
+                                        Console.Write("\nApprove or Decline this request? (A/D): ");
+                                        approvalInput = Console.ReadLine().Trim().ToUpper();
+
+                                        if (approvalInput == "A") // if approved
+                                        {
+                                            requestStatuses[c] = "Approved";
+
+                                            if (!studentBorrowedBooks.ContainsKey(requester)) // check if the student has borrowed books
                                             {
-                                                Console.Clear();
-                                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                                Console.WriteLine($"\n- {studentBorrowRequests[c]} requested by {requestStudents[c]} (Status: {requestStatuses[c]})"); // display the book title and requester
-                                                Console.ResetColor();
+                                                studentBorrowedBooks[requester] = new List<string>(); // create a new list for the student
+                                            }
+                                              
+                                            studentBorrowedBooks[requester].Add(selectedBook); // add the book to the borrower's list
 
-                                                Console.Write("\nApprove or Decline this request? (A/D): ");
-                                                approvalInput = Console.ReadLine().Trim().ToUpper();
+                                            borrowedBooksTracker[selectedBook] = requester; // add the book to the tracker
 
-                                                if (approvalInput == "A") // if librarian approves it
-                                                {
-                                                    status = "Approved";
-                                                    bookApproved = studentBorrowRequests[c]; // get the book title
-                                                    requester = requestStudents[c]; // get the requester's name
+                                            approvedBooks.Add(selectedBook); // add the book to approved books
 
-                                                    // Ensure the requester has a list of borrowed books
-                                                    if (!studentBorrowedBooks.ContainsKey(requester))
-                                                    {
-                                                        studentBorrowedBooks[requester] = new List<string>(); // Initialize the list if it doesn't exist
-                                                    }
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine($"\nRequest approved for '{requester}' to borrow the book '{selectedBook}'");
+                                            Console.ResetColor();
+                                        }
+                                        else if (approvalInput == "D") // if declined
+                                        {
+                                            requestStatuses[c] = "Declined";
 
-                                                    // Add the book to the borrower's list (this is the critical part)
-                                                    studentBorrowedBooks[requester].Add(bookApproved); // Add the book to the student's borrowed list
-                                                    borrowedBooksTracker[bookApproved] = requester; // Track who borrowed the book
+                                            if (pendingBooks.Contains(selectedBook)) // check if the book is in pending books
+                                            {
 
-                                                    // Add to approved books
-                                                    approvedBooks.Add(bookApproved);
-
-                                                    // Update the request status to "Approved"
-                                                    requestStatuses[c] = "Approved";
-
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine($"\nRequest approved for '{requester}' to borrow the book '{bookApproved}'");
-                                                    Console.ResetColor();
-                                                }
-
-
-
-
-                                                else if (approvalInput == "D") // if librarian declines It
-                                                {
-                                                    status = "Declined";
-                                                    declinedBook = studentBorrowRequests[c]; // get the book title
-                                                    declinedRequester = requestStudents[c]; // get the requester's name
-
-                                                    requestStatuses[c] = "Declined"; // Set the status as Declined
-
-                                                    // Remove from pendingBooks list
-                                                    if (pendingBooks.Contains(declinedBook))
-                                                    {
-                                                        pendingBooks.Remove(declinedBook);
-                                                    }
-
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine($"\nRequest for book '{declinedBook}' declined for '{declinedRequester}'."); // display for declined
-                                                    Console.ResetColor();
-                                                }
-                                                else // if the input is invalid
-                                                {
-                                                    status = "Invalid";
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("\nInvalid input. Please enter 'A' or 'D'.");
-                                                    Console.ResetColor();
-                                                    Console.ReadKey();
-                                                }
-                                                Console.ReadKey();
-
+                                                pendingBooks.Remove(selectedBook);
                                             }
 
-                                            while (status == "Invalid"); // keep continuing until valid input is given
-
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine($"\nRequest for book '{selectedBook}' declined for '{requester}'.");
+                                            Console.ResetColor();
                                         }
                                         else
                                         {
-                                            c++; // Only increment if not removing an item (so we don't skip the next item)
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine("\nInvalid input. Please enter 'A' or 'D'.");
+                                            Console.ResetColor();
                                         }
-                                    }
+                                    }                                 
                                 }
-
-                                Console.WriteLine("\nPress any key to continue...");
-                                Console.ReadKey();
-                                break;
                             }
 
-                        case "5": // case handles logging out
+                            Console.WriteLine("\nPress any key to continue...");
+                                Console.ReadKey();
+                                break;
+                            
+
+                        case "5": // case handles logging out for both students and librarians
+
                             keepRunning = false;
                             Console.WriteLine("\nLogging out...");
                             Thread.Sleep(1000);
@@ -1080,10 +1099,13 @@ namespace Programming_2_Midterms
                             Console.ResetColor();
                             Console.ReadKey();
                             break;
+
                     }
                 }
 
-            } while (!isLoggedIn); // end
+            }
+            while (!exitProgram); // end
+                      
         }
     }
 }
