@@ -286,7 +286,7 @@ namespace Programming_2_Midterms
                         Console.WriteLine("\n3. View Borrowed Books");
                         Console.WriteLine("\n4. Return Book");
                         Console.WriteLine("\n5. Logout");
-             
+
                     }
                     else // menu option for librarian
                     {
@@ -295,7 +295,7 @@ namespace Programming_2_Midterms
                         Console.WriteLine("\n3. View Pending Requests");
                         Console.WriteLine("\n4. Approve/Decline Requests");
                         Console.WriteLine("\n5. Logout");
-                     
+
                     }
 
                     Console.Write("\nChoose an option: ");
@@ -539,7 +539,7 @@ namespace Programming_2_Midterms
 
                                     Console.Write("\nEnter your name for confirmation: ");
                                     enteredName = Console.ReadLine().Trim().ToUpper();
-    
+
 
                                     if (enteredName == userName.ToUpper()) // checker of name and book title match
                                     {
@@ -938,32 +938,7 @@ namespace Programming_2_Midterms
                                             Console.WriteLine("\nBook returned successfully.");
                                             Console.ResetColor();
                                         }
-                                        else if (approvedBooks.Contains(ReturnNow) && borrowedBooksTracker[ReturnNow] == userName) // check if the book is approved and borrowed by the user
-                                        {
-
-                                            studentBorrowedBooks[userName].Remove(ReturnNow); // Remove from the borrowed books list
-
-                                            approvedBooks.Remove(ReturnNow); // Remove from approved books
-
-                                            pendingBookRequests.Remove(ReturnNow); // Remove from pending requests
-
-                                            borrowedBooksTracker.Remove(ReturnNow); // Remove from tracker
-
-                                            requestIndex = studentBorrowRequests.IndexOf(ReturnNow); // get the index of the request
-
-                                            if (requestIndex != -1 && requestIndex < requestStudents.Count && requestIndex < requestStatuses.Count) // check if the request index is valid
-                                            {
-                                                studentBorrowRequests.RemoveAt(requestIndex); // remove from requests
-
-                                                requestStudents.RemoveAt(requestIndex); // remove from request students
-
-                                                requestStatuses.RemoveAt(requestIndex); // remove from request statuses
-                                            }
-
-                                            Console.ForegroundColor = ConsoleColor.Green;
-                                            Console.WriteLine("\nBook returned successfully.");
-                                            Console.ResetColor();
-                                        }
+                                       
                                         else // it's still pending approval
                                         {
                                             Console.ForegroundColor = ConsoleColor.Red;
@@ -1022,7 +997,7 @@ namespace Programming_2_Midterms
 
                                     if (int.TryParse(ADinput, out selection) && selection > 0 && selection <= pendingIndices.Count) // check if the input is valid
                                     {
-                                         c = pendingIndices[selection - 1]; // get the actual index of the selected request
+                                        c = pendingIndices[selection - 1]; // get the actual index of the selected request
 
                                         selectedBook = studentBorrowRequests[c]; // get the book title
 
@@ -1046,7 +1021,7 @@ namespace Programming_2_Midterms
                                             {
                                                 studentBorrowedBooks[requester] = new List<string>(); // create a new list for the student
                                             }
-                                              
+
                                             studentBorrowedBooks[requester].Add(selectedBook); // add the book to the borrower's list
 
                                             borrowedBooksTracker[selectedBook] = requester; // add the book to the tracker
@@ -1077,14 +1052,14 @@ namespace Programming_2_Midterms
                                             Console.WriteLine("\nInvalid input. Please enter 'A' or 'D'.");
                                             Console.ResetColor();
                                         }
-                                    }                                 
+                                    }
                                 }
                             }
 
                             Console.WriteLine("\nPress any key to continue...");
-                                Console.ReadKey();
-                                break;
-                            
+                            Console.ReadKey();
+                            break;
+
 
                         case "5": // case handles logging out for both students and librarians
 
@@ -1105,8 +1080,7 @@ namespace Programming_2_Midterms
 
             }
             while (!exitProgram); // end
-                      
+
         }
     }
 }
-
